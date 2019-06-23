@@ -1,0 +1,26 @@
+{
+  "name": "lit-matrix",
+  "version": "0.1.0",
+  "description": "Matrix math using template literals",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pshihn/lit-matrix.git"
+  },
+  "keywords": [
+    "matrix",
+    "templateliterals"
+  ],
+  "author": "Preet Shihn <preetshihn@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pshihn/lit-matrix/issues"
+  },
+  "homepage": "https://github.com/pshihn/lit-matrix#readme",
+  "devDependencies": {
+    "typescript": "^3.5.2"
+  }
+}
