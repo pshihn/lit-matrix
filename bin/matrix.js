@@ -144,75 +144,64 @@ export function isSquare(m) {
     const dimensions = size(m);
     return dimensions[0] === dimensions[1];
 }
-function rightTriangular(m) {
-    const dimensions = size(m);
-    if (!dimensions[0]) {
-        throw new Error('Matrix is empty');
-    }
-    const n = dimensions[0];
-    const np = dimensions[1];
-    const result = clone(m);
-    for (let i = 0; i < n; i++) {
-        if (result[i][i] === 0) {
-            for (let j = i + 1; j < n; j++) {
-                if (result[j][i] !== 0) {
-                    const elements = [];
-                    for (let p = 0; p < np; p++) {
-                        elements.push(result[i][p] + result[j][p]);
-                    }
-                    result[i] = elements;
-                    break;
+function minor(m, row, col) {
+    const minor = [];
+    for (let i = 0; i < m.length; i++) {
+        for (let j = 0; i !== row && j < m[i].length; j++) {
+            if (j !== col) {
+                const r = i < row ? i : i - 1;
+                if (!minor[r]) {
+                    minor[r] = [];
                 }
-            }
-        }
-        if (result[i][i] !== 0) {
-            for (let j = i + 1; j < n; j++) {
-                const multiplier = result[j][i] / result[i][i];
-                const elements = [];
-                for (let p = 0; p < np; p++) {
-                    elements.push(p <= i ? 0 : result[j][p] - result[i][p] * multiplier);
-                }
-                result[j] = elements;
+                minor[r][j < col ? j : j - 1] = m[i][j];
             }
         }
     }
-    return result;
+    return minor;
 }
 export function determinant(m) {
-    if (!isSquare(m) || m.length === 0) {
-        throw new Error('Matrix must be square');
+    const n = m.length;
+    if (n === 0 || (!isSquare(m))) {
+        throw new Error('Invalid matrix dimensions for calculating determinant');
     }
-    const rtm = rightTriangular(m);
-    let d = rtm[0][0];
-    const n = rtm.length;
-    for (let i = 1; i < n; i++) {
-        d = d * rtm[i][i];
+    if (n === 1) {
+        return m[0][0];
     }
-    return d;
+    if (n === 2) {
+        return m[0][0] * m[1][1] - m[0][1] * m[1][0];
+    }
+    let det = 0;
+    for (let i = 0; i < m[0].length; i++) {
+        det += Math.pow(-1, i) * m[0][i] * determinant(minor(m, 0, i));
+    }
+    return det;
 }
-export function isSingular(m) {
-    return isSquare(m) && (determinant(m) === 0);
-}
-function augment(m1, m2) {
-    if (m1.length === 0) {
-        return clone(m2);
+export function inverse(m) {
+    let inversible = isSquare(m);
+    let det = 0;
+    if (inversible) {
+        det = determinant(m);
+        inversible = det !== 0;
     }
-    if (m2.length === 0) {
-        return clone(m1);
+    if (!inversible) {
+        throw new Error('Matrix nor inversible');
     }
-    const T = clone(m1);
-    const cols = T[0].length;
-    let i = T.length;
-    const nj = m2[0].length;
-    let j = 0;
-    if (i !== m2.length) {
-        throw new Error('Mismatched matrix size in augment');
-    }
-    while (i--) {
-        j = nj;
-        while (j--) {
-            T[i][cols + j] = m2[i][j];
+    const inverse = [];
+    for (let i = 0; i < m.length; i++) {
+        for (let j = 0; j < m[i].length; j++) {
+            if (!inverse[i]) {
+                inverse[i] = [];
+            }
+            inverse[i][j] = Math.pow(-1, i + j) * determinant(minor(m, i, j));
         }
     }
-    return T;
+    const idet = 1.0 / det;
+    for (let i = 0; i < inverse.length; i++) {
+        for (let j = 0; j <= i; j++) {
+            const temp = inverse[i][j];
+            inverse[i][j] = inverse[j][i] * idet;
+            inverse[j][i] = temp * idet;
+        }
+    }
+    return inverse;
 }

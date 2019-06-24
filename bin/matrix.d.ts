@@ -9,4 +9,4 @@ export declare function multiply(op1: number | Matrix, op2: number | Matrix): Ma
 export declare function transpose(m: Matrix): Matrix;
 export declare function isSquare(m: Matrix): boolean;
 export declare function determinant(m: Matrix): number;
-export declare function isSingular(m: Matrix): boolean;
+export declare function inverse(m: Matrix): Matrix;
