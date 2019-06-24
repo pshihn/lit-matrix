@@ -12,6 +12,18 @@ export function sameSize(m1: Matrix, m2: Matrix): boolean {
   return size1[0] === size2[0] && size1[1] === size2[1];
 }
 
+export function clone(m: Matrix): Matrix {
+  const result: Matrix = [];
+  for (let i = 0; i < m.length; i++) {
+    const row: number[] = [];
+    for (let j = 0; j < m[i].length; j++) {
+      row.push(m[i][j]);
+    }
+    result.push(row);
+  }
+  return result;
+}
+
 export function add(op1: number | Matrix, op2: number | Matrix): Matrix {
   const [scalar1, scalar2] = [typeof op1 !== 'number', typeof op2 !== 'number'];
   if (scalar1 && scalar2) {
@@ -133,4 +145,86 @@ export function transpose(m: Matrix): Matrix {
     }
   }
   return result;
+}
+
+export function isSquare(m: Matrix): boolean {
+  const dimensions = size(m);
+  return dimensions[0] === dimensions[1];
+}
+
+function rightTriangular(m: Matrix): Matrix {
+  const dimensions = size(m);
+  if (!dimensions[0]) {
+    throw new Error('Matrix is empty');
+  }
+  const n = dimensions[0];
+  const np = dimensions[1];
+  const result = clone(m);
+  for (let i = 0; i < n; i++) {
+    if (result[i][i] === 0) {
+      for (let j = i + 1; j < n; j++) {
+        if (result[j][i] !== 0) {
+          const elements: number[] = [];
+          for (let p = 0; p < np; p++) {
+            elements.push(result[i][p] + result[j][p]);
+          }
+          result[i] = elements;
+          break;
+        }
+      }
+    }
+    if (result[i][i] !== 0) {
+      for (let j = i + 1; j < n; j++) {
+        const multiplier = result[j][i] / result[i][i];
+        const elements: number[] = [];
+        for (let p = 0; p < np; p++) {
+          elements.push(p <= i ? 0 : result[j][p] - result[i][p] * multiplier);
+        }
+        result[j] = elements;
+      }
+    }
+  }
+  return result;
+}
+
+export function determinant(m: Matrix): number {
+  if (!isSquare(m) || m.length === 0) {
+    throw new Error('Matrix must be square');
+  }
+  const rtm = rightTriangular(m);
+  let d = rtm[0][0];
+  const n = rtm.length;
+  for (let i = 1; i < n; i++) {
+    d = d * rtm[i][i];
+  }
+  return d;
+}
+
+export function isSingular(m: Matrix): boolean {
+  return isSquare(m) && (determinant(m) === 0);
+}
+
+function augment(m1: Matrix, m2: Matrix): Matrix {
+  if (m1.length === 0) {
+    return clone(m2);
+  }
+  if (m2.length === 0) {
+    return clone(m1);
+  }
+
+  const T = clone(m1);
+  const cols = T[0].length;
+  let i = T.length;
+  const nj = m2[0].length;
+  let j = 0;
+  if (i !== m2.length) {
+    throw new Error('Mismatched matrix size in augment');
+  }
+  while (i--) {
+    j = nj;
+    while (j--) {
+      T[i][cols + j] = m2[i][j];
+    }
+  }
+  return T;
 }
