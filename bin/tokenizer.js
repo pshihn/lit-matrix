@@ -5,6 +5,10 @@ export function tokenize(strings, keys) {
         const list = tokenizeString(cleanStrings[i]);
         tokens = tokens.concat(list);
         if (i < keys.length) {
+            const prevToken = tokens.length && tokens[tokens.length - 1];
+            if (prevToken && (prevToken.type === 'literal' || prevToken.type === 'variable')) {
+                tokens.push({ type: 'operator', value: '*' });
+            }
             tokens.push({
                 type: 'variable',
                 value: keys[i]
