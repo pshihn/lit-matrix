@@ -12,8 +12,12 @@ function sameSize(m1: Matrix, m2: Matrix): boolean {
   return size1[0] === size2[0] && size1[1] === size2[1];
 }
 
+export function checkScalars(...values: (number | Matrix)[]): boolean[] {
+  return values.map<boolean>((v) => (typeof v === 'number'));
+}
+
 export function add(op1: number | Matrix, op2: number | Matrix): Matrix {
-  const [scalar1, scalar2] = [typeof op1 !== 'number', typeof op2 !== 'number'];
+  const [scalar1, scalar2] = checkScalars(op1, op2);
   if (scalar1 && scalar2) {
     throw new Error('At least one of the operands needs to be a Matrix');
   }
@@ -47,7 +51,7 @@ export function add(op1: number | Matrix, op2: number | Matrix): Matrix {
 }
 
 export function sub(op1: number | Matrix, op2: number | Matrix): Matrix {
-  const [scalar1, scalar2] = [typeof op1 !== 'number', typeof op2 !== 'number'];
+  const [scalar1, scalar2] = checkScalars(op1, op2);
   if (scalar1) {
     throw new Error('The first operand for subtraction cannot be a number');
   }
@@ -80,7 +84,7 @@ export function sub(op1: number | Matrix, op2: number | Matrix): Matrix {
 }
 
 export function multiply(op1: number | Matrix, op2: number | Matrix): Matrix {
-  const [scalar1, scalar2] = [typeof op1 !== 'number', typeof op2 !== 'number'];
+  const [scalar1, scalar2] = checkScalars(op1, op2);
   if (scalar1 && scalar2) {
     throw new Error('At least one of the operands needs to be a Matrix');
   }

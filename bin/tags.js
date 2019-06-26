@@ -1,3 +1,6 @@
+import { parse } from './parser';
+import { tokenize } from './tokenizer';
+import { evaluate } from './evaluator';
 export function matrix(strings, ...keys) {
     const buffer = [];
     for (let i = 0; i < strings.length; i++) {
@@ -32,5 +35,7 @@ export function matrix(strings, ...keys) {
     return m;
 }
 export function meq(strings, ...keys) {
-    console.log({ strings, keys });
+    const tokens = tokenize(strings, keys);
+    const node = parse(tokens);
+    return evaluate(node);
 }

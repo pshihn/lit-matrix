@@ -1,4 +1,7 @@
 import { Matrix } from './matrix';
+import { parse } from './parser';
+import { tokenize } from './tokenizer';
+import { evaluate } from './evaluator';
 
 export function matrix(strings: string[], ...keys: number[]): Matrix {
   const buffer: (string | number)[] = [];
@@ -34,6 +37,8 @@ export function matrix(strings: string[], ...keys: number[]): Matrix {
   return m;
 }
 
-export function meq(strings: string[], ...keys: (number | Matrix)[]) {
-  console.log({ strings, keys });
+export function meq(strings: string[], ...keys: (number | Matrix)[]): Matrix | number {
+  const tokens = tokenize(strings, keys);
+  const node = parse(tokens);
+  return evaluate(node);
 }
