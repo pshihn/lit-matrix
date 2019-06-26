@@ -1,22 +1,11 @@
-export function size(m) {
+function size(m) {
     const rows = m.length || 0;
     const cols = rows ? m[0].length || 0 : 0;
     return [rows, cols];
 }
-export function sameSize(m1, m2) {
+function sameSize(m1, m2) {
     const [size1, size2] = [size(m1), size(m2)];
     return size1[0] === size2[0] && size1[1] === size2[1];
-}
-export function clone(m) {
-    const result = [];
-    for (let i = 0; i < m.length; i++) {
-        const row = [];
-        for (let j = 0; j < m[i].length; j++) {
-            row.push(m[i][j]);
-        }
-        result.push(row);
-    }
-    return result;
 }
 export function add(op1, op2) {
     const [scalar1, scalar2] = [typeof op1 !== 'number', typeof op2 !== 'number'];
@@ -140,7 +129,7 @@ export function transpose(m) {
     }
     return result;
 }
-export function isSquare(m) {
+function isSquare(m) {
     const dimensions = size(m);
     return dimensions[0] === dimensions[1];
 }
@@ -159,7 +148,7 @@ function minor(m, row, col) {
     }
     return minor;
 }
-export function determinant(m) {
+function determinant(m) {
     const n = m.length;
     if (n === 0 || (!isSquare(m))) {
         throw new Error('Invalid matrix dimensions for calculating determinant');

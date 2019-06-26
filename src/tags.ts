@@ -33,3 +33,7 @@ export function matrix(strings: string[], ...keys: number[]): Matrix {
   }
   return m;
 }
+
+export function meq(strings: string[], ...keys: (number | Matrix)[]) {
+  console.log({ strings, keys });
+}

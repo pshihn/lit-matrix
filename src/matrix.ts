@@ -1,27 +1,15 @@
 export type Matrix = number[][];
 export type MatrixSize = [number, number];
 
-export function size(m: Matrix): MatrixSize {
+function size(m: Matrix): MatrixSize {
   const rows = m.length || 0;
   const cols = rows ? m[0].length || 0 : 0;
   return [rows, cols];
 }
 
-export function sameSize(m1: Matrix, m2: Matrix): boolean {
+function sameSize(m1: Matrix, m2: Matrix): boolean {
   const [size1, size2] = [size(m1), size(m2)];
   return size1[0] === size2[0] && size1[1] === size2[1];
-}
-
-export function clone(m: Matrix): Matrix {
-  const result: Matrix = [];
-  for (let i = 0; i < m.length; i++) {
-    const row: number[] = [];
-    for (let j = 0; j < m[i].length; j++) {
-      row.push(m[i][j]);
-    }
-    result.push(row);
-  }
-  return result;
 }
 
 export function add(op1: number | Matrix, op2: number | Matrix): Matrix {
@@ -147,7 +135,7 @@ export function transpose(m: Matrix): Matrix {
   return result;
 }
 
-export function isSquare(m: Matrix): boolean {
+function isSquare(m: Matrix): boolean {
   const dimensions = size(m);
   return dimensions[0] === dimensions[1];
 }
@@ -168,7 +156,7 @@ function minor(m: Matrix, row: number, col: number): Matrix {
   return minor;
 }
 
-export function determinant(m: Matrix): number {
+function determinant(m: Matrix): number {
   const n = m.length;
   if (n === 0 || (!isSquare(m))) {
     throw new Error('Invalid matrix dimensions for calculating determinant');

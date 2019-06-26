@@ -31,3 +31,6 @@ export function matrix(strings, ...keys) {
     }
     return m;
 }
+export function meq(strings, ...keys) {
+    console.log({ strings, keys });
+}
