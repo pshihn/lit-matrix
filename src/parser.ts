@@ -18,15 +18,34 @@ const precedenceMap: { [op: string]: number } = {
   '-': 2
 };
 
-export function parse(tokens: Token[]): Token[] {
-  const queue: Token[] = [];
+export interface SyntaxNode {
+  token: Token;
+  leftChild?: SyntaxNode;
+  rightChild?: SyntaxNode;
+}
+
+export function parse(tokens: Token[]): SyntaxNode {
+  const outStack: SyntaxNode[] = [];
   const stack: Token[] = [];
+
+  const pushNodeToOutStack = (pop?: Token) => {
+    if (pop) {
+      const onode: SyntaxNode = {
+        token: pop,
+        rightChild: outStack.pop(),
+        leftChild: outStack.pop()
+      };
+      outStack.push(onode);
+    }
+  };
 
   tokens.forEach((t) => {
     switch (t.type) {
       case 'literal':
       case 'variable':
-        queue.push(t);
+        outStack.push({
+          token: t
+        });
         break;
       case 'operator':
         while (true) {
@@ -42,8 +61,7 @@ export function parse(tokens: Token[]): Token[] {
             }
           }
           if (check) {
-            const [pop] = stack.splice(stack.length - 1);
-            queue.push(pop);
+            pushNodeToOutStack(stack.pop());
           } else {
             break;
           }
@@ -55,20 +73,22 @@ export function parse(tokens: Token[]): Token[] {
         break;
       case 'rparen':
         while (stack.length) {
-          const [pop] = stack.splice(stack.length - 1);
+          const pop = stack.pop()!;
           if (pop.type === 'lparen') {
             break;
           } else {
-            queue.push(pop);
+            pushNodeToOutStack(pop);
           }
         }
         break;
     }
   });
   while (stack.length) {
-    const [pop] = stack.splice(stack.length - 1);
-    queue.push(pop);
+    pushNodeToOutStack(stack.pop());
   }
 
-  return queue;
+  if (outStack.length !== 1) {
+    throw new Error('Failed to parse expression');
+  }
+  return outStack[0];
 }

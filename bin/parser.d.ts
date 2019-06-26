@@ -1,2 +1,7 @@
 import { Token } from './tokenizer';
-export declare function parse(tokens: Token[]): Token[];
+export interface SyntaxNode {
+    token: Token;
+    leftChild?: SyntaxNode;
+    rightChild?: SyntaxNode;
+}
+export declare function parse(tokens: Token[]): SyntaxNode;
