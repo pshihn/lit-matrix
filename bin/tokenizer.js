@@ -2,11 +2,11 @@ export function tokenize(strings, keys) {
     const cleanStrings = strings.map((s) => s.replace(/\s+/g, ''));
     let tokens = [];
     for (let i = 0; i < cleanStrings.length; i++) {
-        const list = tokenizeString(cleanStrings[i]);
+        const list = tokenizeString(cleanStrings[i], tokens);
         tokens = tokens.concat(list);
         if (i < keys.length) {
             const prevToken = tokens.length && tokens[tokens.length - 1];
-            if (prevToken && (prevToken.type === 'literal' || prevToken.type === 'variable')) {
+            if (prevToken && (prevToken.type === 'literal' || prevToken.type === 'variable' || prevToken.type === 'rparen')) {
                 tokens.push({ type: 'operator', value: '*' });
             }
             tokens.push({
@@ -25,7 +25,7 @@ function bufferToNumber(buffer) {
     }
     return +bjoin;
 }
-function tokenizeString(s) {
+function tokenizeString(s, fullList) {
     const result = [];
     const split = s.split('');
     let buffer = [];
@@ -39,7 +39,17 @@ function tokenizeString(s) {
                 buffer = [];
             }
             if (isOperator(char)) {
-                result.push({ type: 'operator', value: char });
+                let skip = false;
+                if (char === '-') {
+                    const prevToken = result.length ? result[result.length - 1] : (fullList.length ? fullList[fullList.length - 1] : null);
+                    if ((!prevToken) || (prevToken.type === 'operator') || (prevToken.type === 'lparen')) {
+                        skip = true;
+                        buffer.push(char);
+                    }
+                }
+                if (!skip) {
+                    result.push({ type: 'operator', value: char });
+                }
             }
             else if (isLeftParen(char)) {
                 result.push({ type: 'lparen', value: char });
