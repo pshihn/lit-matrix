@@ -21,8 +21,8 @@ const B = matrix`-27  6   3, 10  -3  -5, -4  -3   2`;
 **Evaulate matrix equations** using the `meq` tagged template. 
 
 ```javascript
-// AB + (-2.5 * B)
-const result = meq`${A}${B} + (-2.5 * ${B})`;
+// AB - (2 * B)
+const result = meq`${A}${B} - (2 * ${B})`;
 ```
 
 You can pass in a mtrix as a 2D array as well
@@ -35,6 +35,10 @@ const B = [
 ];
 const result = meq`${A} + ${B})`;
 ```
+
+The order of operations follows standard practice, and parenthesis can be used.
+Multiplication operation is implied when there is no operation specified between two matrices
+or between a matrix and a numeric literal.
 
 ### Example
 
