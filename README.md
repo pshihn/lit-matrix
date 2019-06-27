@@ -57,7 +57,7 @@ const B = matrix`
 // Result = 11
 //          -1
 //          25
-const result = meq`(-1 / 20)${A}${B} + B`;
+const result = meq`(-1 / 20)${A}${B} + ${B}`;
 ```
 
 
