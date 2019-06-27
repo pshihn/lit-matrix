@@ -25,7 +25,7 @@ const B = matrix`-27  6   3, 10  -3  -5, -4  -3   2`;
 const result = meq`${A}${B} - (2 * ${B})`;
 ```
 
-You can pass in a mtrix as a 2D array as well
+You can pass in a matrix as a 2D numeric array as well
 
 ```javascript
 const B = [
